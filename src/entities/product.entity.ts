@@ -1,3 +1,4 @@
+import { IsNotEmpty, Length } from "class-validator";
 import {
     Column,
     CreateDateColumn,
@@ -11,9 +12,13 @@ export class Product {
     id: number;
 
     @Column()
+    @IsNotEmpty()
+    @Length(3, 255)
     name: string;
 
     @Column()
+    @IsNotEmpty()
+    @Length(3, 255)
     description: string;
 
     @CreateDateColumn({
