@@ -16,7 +16,7 @@
     "typescript": "^4.9.4"
   },
   "scripts": {
-    "dev": "ts-node-dev transpile-node index.ts"
+    "dev": "ts-node-dev --transpile-only src/index.ts"
   },
   "dependencies": {
     "typeorm": "^0.3.11"
