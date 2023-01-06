@@ -8,10 +8,6 @@
     "@types/dotenv": "^8.2.0",
     "@types/express": "^4.17.15",
     "@types/node": "^18.11.18",
-    "cors": "^2.8.5",
-    "dotenv": "^16.0.3",
-    "express": "^4.18.2",
-    "pg": "^8.8.0",
     "ts-node-dev": "^2.0.0",
     "typescript": "^4.9.4"
   },
@@ -19,6 +15,11 @@
     "dev": "ts-node-dev --transpile-only src/index.ts"
   },
   "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "pg": "^8.8.0",
+    "reflect-metadata": "^0.1.13",
     "typeorm": "^0.3.11"
   }
 }
