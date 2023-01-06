@@ -1,23 +1,18 @@
 import "module-alias/register";
+import "@/database/connection";
+
 import bodyParser from "body-parser";
-import express from "express";
+import cors from "cors";
 import dotenv from "dotenv";
+import express from "express";
+import routes from "@/routes";
 
 dotenv.config();
-import "./connection";
-import ProductController from "@/controllers/ProductController";
-import cors from "cors";
-
 const PORT = process.env.PORT || 8080;
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
-
-app.get("/api/products", ProductController.getAll);
-app.get("/api/products/:id", ProductController.getById);
-app.post("/api/products", ProductController.create);
-app.put("/api/products/:id", ProductController.update);
-app.delete("/api/products/:id", ProductController.delete);
+app.use(routes);
 
 app.get("/", (req, resp) => {
     resp.send("Server up");

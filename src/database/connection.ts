@@ -10,7 +10,7 @@ const AppDataSource = new DataSource({
     database: "painel_admin",
     synchronize: true,
     logging: true,
-    entities: [__dirname + "/**/*.entity.ts"],
+    entities: [__dirname + "/../**/*.entity.ts"],
     subscribers: [],
     migrations: [],
 });
