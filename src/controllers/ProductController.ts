@@ -1,9 +1,8 @@
 import ProductDTO from "@/entities/dto/product.dto";
-import { ProductRepository } from "./../repositories/productRepository";
-import { Product } from "@/entities/product.entity";
-import { Request, Response } from "express";
-import AppDataSource from "@/database/connection";
 import { validate } from "class-validator";
+import { Request, Response } from "express";
+
+import { ProductRepository } from "./../repositories/productRepository";
 
 class ProductController {
     private productRepository;
