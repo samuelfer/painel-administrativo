@@ -1,23 +1,29 @@
+import ProductDTO from "@/entities/dto/product.dto";
+import { ProductRepository } from "./../repositories/productRepository";
 import { Product } from "@/entities/product.entity";
 import { Request, Response } from "express";
 import AppDataSource from "@/database/connection";
 import { validate } from "class-validator";
 
 class ProductController {
-    async getAll(req: Request, resp: Response): Promise<Response> {
-        const productRepository = AppDataSource.getRepository(Product);
-        const products = await productRepository.find();
+    private productRepository;
+
+    constructor() {
+        this.productRepository = new ProductRepository();
+    }
+
+    getAll = async (_: Request, resp: Response): Promise<Response> => {
+        const products = await this.productRepository.getAll();
         return resp.status(200).send({
             success: true,
             data: products,
         });
-    }
+    };
 
-    async getById(req: Request, resp: Response): Promise<Response> {
+    getById = async (req: Request, resp: Response): Promise<Response> => {
         const id: number = +req.params.id;
 
-        const productRepository = AppDataSource.getRepository(Product);
-        const product = await productRepository.findOneBy({ id });
+        const product = await this.productRepository.getById(id);
 
         if (!product) {
             return resp.status(404).send({
@@ -30,24 +36,23 @@ class ProductController {
             success: true,
             data: product,
         });
-    }
+    };
 
-    async create(req: Request, resp: Response): Promise<Response> {
-        const productRepository = AppDataSource.getRepository(Product);
+    create = async (req: Request, resp: Response): Promise<Response> => {
         const { name, description } = req.body;
 
-        const product = new Product();
-        product.name = name;
-        product.description = description;
+        const productDto = new ProductDTO();
+        productDto.name = name;
+        productDto.description = description;
 
-        const errors = await validate(product);
+        const errors = await validate(productDto);
 
         if (errors.length > 0) {
             return resp.status(422).send({ errors });
         }
 
         try {
-            const productSaved = await productRepository.save(product);
+            const productSaved = await this.productRepository.save(productDto);
 
             return resp.status(201).send({
                 success: true,
@@ -59,17 +64,15 @@ class ProductController {
                 message: `Ocorreu um erro ao tentar cadastrar o produto`,
             });
         }
-    }
+    };
 
-    async update(req: Request, resp: Response): Promise<Response> {
-        const productRepository = AppDataSource.getRepository(Product);
-
+    update = async (req: Request, resp: Response): Promise<Response> => {
         const { name, description } = req.body;
         const id: number = +req.params.id;
 
         let product;
         try {
-            product = await productRepository.findOneByOrFail({ id });
+            product = await this.productRepository.findOrFail(id);
         } catch (error) {
             return resp.status(404).send({
                 success: false,
@@ -77,17 +80,20 @@ class ProductController {
             });
         }
 
-        product.name = name;
-        product.description = description;
+        if (product) {
+            const productDto = new ProductDTO();
+            productDto.name = name;
+            productDto.description = description;
 
-        const errors = await validate(product);
+            const errors = await validate(productDto);
 
-        if (errors.length > 0) {
-            return resp.status(422).send({ errors });
+            if (errors.length > 0) {
+                return resp.status(422).send({ errors });
+            }
         }
 
         try {
-            const productSaved = await productRepository.save(product);
+            const productSaved = await this.productRepository.save(product);
 
             return resp.status(200).send({
                 success: true,
@@ -99,14 +105,13 @@ class ProductController {
                 message: `Ocorreu um erro ao tentar atualizar o produto de id ${id}`,
             });
         }
-    }
+    };
 
-    async delete(req: Request, resp: Response): Promise<Response> {
-        const productRepository = AppDataSource.getRepository(Product);
+    delete = async (req: Request, resp: Response): Promise<Response> => {
         const id: number = +req.params.id;
 
         try {
-            await productRepository.findOneByOrFail({ id });
+            await this.productRepository.findOrFail(id);
         } catch (error) {
             return resp.status(404).send({
                 success: false,
@@ -115,7 +120,7 @@ class ProductController {
         }
 
         try {
-            await productRepository.delete(id);
+            await this.productRepository.delete(id);
             return resp.status(204).send({});
         } catch (error) {
             return resp.status(400).send({
@@ -123,7 +128,7 @@ class ProductController {
                 message: `Ocorreu um erro ao tentar deletar o produto de id ${id}`,
             });
         }
-    }
+    };
 }
 
 export default new ProductController();
